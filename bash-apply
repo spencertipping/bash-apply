@@ -1,0 +1,17 @@
+#!/bin/bash
+apply() {
+  local apply_cmd=$1
+  shift
+  local apply_xargs_i_opt=
+  for arg; do
+    if [[ "$arg" == "{}" ]]; then
+      apply_xargs_i_opt="-I{}"
+      break
+    fi
+  done
+
+  local apply_temp=$(mktemp -u)
+  echo "$apply_temp" | xargs -n1 $apply_xargs_i_opt "$@"
+  eval $apply_cmd "$apply_temp"
+  rm -r "$apply_temp"
+}
